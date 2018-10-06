@@ -234,14 +234,10 @@ export class WorkpadTemplates extends React.PureComponent {
       const tagMatch = filterTags.length
         ? filterTags.some(filterTag => tags.indexOf(filterTag) > -1)
         : true;
+
       const textMatch = searchTerm
         ? name.indexOf(searchTerm) > -1 || description.indexOf(searchTerm) > -1
         : true;
-
-      const nameMatch = name.indexOf(searchTerm) > -1;
-      const descriptionMatch = description.indexOf(searchTerm) > -1;
-
-      console.log({ nameMatch, descriptionMatch });
 
       return tagMatch && textMatch;
     });
