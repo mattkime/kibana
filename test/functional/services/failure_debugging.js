@@ -17,7 +17,7 @@
  * under the License.
  */
 
-import { resolve } from 'path';
+import { resolve, relative } from 'path';
 import { writeFile } from 'fs';
 import mkdirp from 'mkdirp';
 import del from 'del';
@@ -35,22 +35,26 @@ export async function FailureDebuggingProvider({ getService }) {
 
   await del(config.get('failureDebugging.htmlDirectory'));
 
-  async function logCurrentUrl() {
+  async function logCurrentUrl(test) {
     const currentUrl = await browser.getCurrentUrl();
+    test.debug.currentUrl = currentUrl;
     log.info(`Current URL is: ${currentUrl}`);
   }
 
-  async function savePageHtml(name) {
+  async function savePageHtml(name, test) {
     await mkdirAsync(config.get('failureDebugging.htmlDirectory'));
     const htmlOutputFileName = resolve(config.get('failureDebugging.htmlDirectory'), `${name}.html`);
+    const htmlOutputFileNameRelative = relative(process.env.WORKSPACE + '/kibana', htmlOutputFileName);
     const pageSource = await browser.getPageSource();
+    test.debug.htmlFileName = `https://storage.googleapis.com/kibana-ci-artifacts/jobs/elastic+kibana+pull-request/${process.env.JOB_BASE_NAME}/${process.env.BUILD_ID}/kibana/${htmlOutputFileNameRelative}`;
     log.info(`Saving page source to: ${htmlOutputFileName}`);
     await writeFileAsync(htmlOutputFileName, pageSource);
   }
 
-  async function logBrowserConsole() {
+  async function logBrowserConsole(test) {
     const browserLogs = await browser.getLogsFor('browser');
     const browserOutput = browserLogs.reduce((acc, log) => acc += `${log.message.replace(/\\n/g, '\n')}\n`, '');
+    test.debug.browserOutput = browserOutput;
     log.info(`Browser output is: ${browserOutput}`);
   }
 
@@ -58,11 +62,13 @@ export async function FailureDebuggingProvider({ getService }) {
     // Replace characters in test names which can't be used in filenames, like *
     const name = test.fullTitle().replace(/([^ a-zA-Z0-9-]+)/g, '_');
 
+    test.debug = {};
+
     await Promise.all([
-      screenshots.takeForFailure(name),
-      logCurrentUrl(),
-      savePageHtml(name),
-      logBrowserConsole(),
+      screenshots.takeForFailure(name, undefined, test),
+      logCurrentUrl(test),
+      savePageHtml(name, test),
+      logBrowserConsole(test),
     ]);
   }
 
