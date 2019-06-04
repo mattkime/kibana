@@ -6,7 +6,7 @@
 import { getRollupSearchCapabilities } from './rollup_search_capabilities';
 
 class DefaultSearchCapabilities {
-  constructor(request, batchRequestsSupport, fieldsCapabilities = {}) {
+  constructor(request, fieldsCapabilities = {}) {
     this.fieldsCapabilities = fieldsCapabilities;
     this.parseInterval = jest.fn((interval) => interval);
   }
