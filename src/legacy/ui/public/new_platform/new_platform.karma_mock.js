@@ -224,7 +224,7 @@ export const npStart = {
           history: sinon.fake(),
         },
       },
-      fieldFormats: getFieldFormatsRegistry(mockUiSettings),
+      fieldFormats: getFieldFormatsRegistry(mockCore),
     },
     share: {
       toggleShareContextMenu: () => {},
