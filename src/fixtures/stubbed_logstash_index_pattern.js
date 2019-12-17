@@ -41,7 +41,7 @@ export default function stubbedLogstashIndexPatternService() {
     };
   });
 
-  const indexPattern = new StubIndexPattern('logstash-*', cfg => cfg, 'time', fields, npSetup);
+  const indexPattern = new StubIndexPattern('logstash-*', cfg => cfg, 'time', fields, npSetup.core);
 
   indexPattern.id = 'logstash-*';
   indexPattern.isTimeNanosBased = () => false;

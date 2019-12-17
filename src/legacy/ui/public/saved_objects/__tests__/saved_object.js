@@ -305,7 +305,13 @@ describe('Saved Object', function() {
                 type: 'dashboard',
               });
             });
-            const indexPattern = new StubIndexPattern('my-index', getConfig, null, [], npSetup);
+            const indexPattern = new StubIndexPattern(
+              'my-index',
+              getConfig,
+              null,
+              [],
+              npSetup.core
+            );
             indexPattern.title = indexPattern.id;
             savedObject.searchSource.setField('index', indexPattern);
             return savedObject.save().then(() => {
@@ -689,7 +695,13 @@ describe('Saved Object', function() {
 
         const savedObject = new SavedObject(config);
         sinon.stub(savedObject, 'hydrateIndexPattern').callsFake(() => {
-          const indexPattern = new StubIndexPattern(indexPatternId, getConfig, null, [], npSetup);
+          const indexPattern = new StubIndexPattern(
+            indexPatternId,
+            getConfig,
+            null,
+            [],
+            npSetup.core
+          );
           indexPattern.title = indexPattern.id;
           savedObject.searchSource.setField('index', indexPattern);
           return Promise.resolve(indexPattern);
