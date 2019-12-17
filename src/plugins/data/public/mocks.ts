@@ -50,6 +50,7 @@ const fieldFormatsMock: PublicMethodsOf<FieldFormatRegisty> = {
   init: jest.fn(),
   register: jest.fn(),
   parseDefaultTypeMap: jest.fn(),
+  generateFieldFormatMetaParams: jest.fn(),
 };
 
 const createSetupContract = (): Setup => {

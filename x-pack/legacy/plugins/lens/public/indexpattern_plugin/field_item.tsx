@@ -282,11 +282,13 @@ function FieldItemPopoverContents(props: State & FieldItemProps) {
   let formatter: { convert: (data: unknown) => string };
   if (indexPattern.fieldFormatMap && indexPattern.fieldFormatMap[field.name]) {
     const FormatType = fieldFormats.getType(indexPattern.fieldFormatMap[field.name].id);
+
+    const metaParams = fieldFormats.generateFieldFormatMetaParams(
+      indexPattern.fieldFormatMap[field.name].params as {}
+    );
+
     if (FormatType) {
-      formatter = new FormatType(
-        indexPattern.fieldFormatMap[field.name].params,
-        core.uiSettings.get.bind(core.uiSettings)
-      );
+      formatter = new FormatType(metaParams, core.uiSettings.get.bind(core.uiSettings));
     } else {
       formatter = { convert: (data: unknown) => JSON.stringify(data) };
     }

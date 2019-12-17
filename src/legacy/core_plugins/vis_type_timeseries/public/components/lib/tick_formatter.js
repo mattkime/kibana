@@ -41,10 +41,12 @@ export const createTickFormatter = (format = '0,0.[00]', template, getConfig = n
   } else {
     let FieldFormat = fieldFormats.getType(format);
     if (FieldFormat) {
-      formatter = new FieldFormat(null, getConfig);
+      const metaParams = fieldFormats.generateFieldFormatMetaParams();
+      formatter = new FieldFormat(metaParams, getConfig);
     } else {
       FieldFormat = fieldFormats.getType('number');
-      formatter = new FieldFormat({ pattern: format }, getConfig);
+      const metaParams = fieldFormats.generateFieldFormatMetaParams({ pattern: format });
+      formatter = new FieldFormat(metaParams, getConfig);
     }
   }
   return val => {

@@ -51,8 +51,9 @@ export class TableVis extends Component {
 
     const fieldFormats = npStart.plugins.data.fieldFormats;
     const DateFormat = fieldFormats.getType(FIELD_FORMAT_IDS.DATE);
+    const metaParams = fieldFormats.generateFieldFormatMetaParams();
 
-    this.dateFormatter = new DateFormat({}, this.props.getConfig);
+    this.dateFormatter = new DateFormat(metaParams, this.props.getConfig);
   }
 
   get visibleSeries() {

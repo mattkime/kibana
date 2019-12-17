@@ -40,8 +40,8 @@ setFieldFormats({
 
 import { getFieldFormatsRegistry } from './stub_field_formats';
 
-export default function StubIndexPattern(pattern, getConfig, timeField, fields, uiSettings) {
-  const registeredFieldFormats = getFieldFormatsRegistry(uiSettings);
+export default function StubIndexPattern(pattern, getConfig, timeField, fields, npSetup) {
+  const registeredFieldFormats = getFieldFormatsRegistry(npSetup);
 
   this.id = pattern;
   this.title = pattern;
@@ -72,7 +72,9 @@ export default function StubIndexPattern(pattern, getConfig, timeField, fields, 
 
   this.stubSetFieldFormat = function(fieldName, id, params) {
     const FieldFormat = registeredFieldFormats.getType(id);
-    this.fieldFormatMap[fieldName] = new FieldFormat(params);
+    const metaParams = registeredFieldFormats.generateFieldFormatMetaParams(params);
+
+    this.fieldFormatMap[fieldName] = new FieldFormat(metaParams);
     this._reindexFields();
   };
 

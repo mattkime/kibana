@@ -122,9 +122,11 @@ export class IndexPattern implements IIndexPattern {
   }
 
   private deserializeFieldFormatMap(mapping: any) {
-    const FieldFormat = getFieldFormats().getType(mapping.id);
+    const fieldFormatsService = getFieldFormats();
+    const FieldFormat = fieldFormatsService.getType(mapping.id);
+    const metaParams = fieldFormatsService.generateFieldFormatMetaParams(mapping.params);
 
-    return FieldFormat && new FieldFormat(mapping.params, this.getConfig);
+    return FieldFormat && new FieldFormat(metaParams, this.getConfig);
   }
 
   private initFields(input?: any) {

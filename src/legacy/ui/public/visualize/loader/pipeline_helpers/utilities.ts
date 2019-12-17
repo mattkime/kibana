@@ -23,7 +23,7 @@ import { AggConfig, Vis } from 'ui/vis';
 import { npStart } from 'ui/new_platform';
 import { SerializedFieldFormat } from 'src/plugins/expressions/public';
 
-import { IFieldFormatId, FieldFormat } from '../../../../../../plugins/data/public';
+import { IFieldFormatId, FieldFormat, ContentType } from '../../../../../../plugins/data/public';
 
 import { tabifyGetColumns } from '../../../agg_response/tabify/_get_columns';
 import { DateRangeKey, convertDateRangeToString } from '../../../agg_types/buckets/date_range';
@@ -50,9 +50,10 @@ const getFieldFormat = (id?: IFieldFormatId, params: object = {}): FieldFormat =
 
   if (id) {
     const Format = fieldFormats.getType(id);
+    const metaParams = fieldFormats.generateFieldFormatMetaParams(params);
 
     if (Format) {
-      return new Format(params, getConfig);
+      return new Format(metaParams, getConfig);
     }
   }
 
@@ -140,16 +141,12 @@ export const getFormat: FormatFactory = mapping => {
           if (val === '__missing__') {
             return params.missingBucketLabel;
           }
-          const parsedUrl = {
-            origin: window.location.origin,
-            pathname: window.location.pathname,
-            basePath: npStart.core.http.basePath,
-          };
+
           // @ts-ignore
-          return format.convert(val, undefined, undefined, parsedUrl);
+          return format.convert(val);
         };
       },
-      convert: (val: string, type: string) => {
+      convert: (val: string, type: ContentType) => {
         const format = getFieldFormat(params.id, mapping.params);
         if (val === '__other__') {
           return params.otherBucketLabel;
@@ -157,13 +154,8 @@ export const getFormat: FormatFactory = mapping => {
         if (val === '__missing__') {
           return params.missingBucketLabel;
         }
-        const parsedUrl = {
-          origin: window.location.origin,
-          pathname: window.location.pathname,
-          basePath: npStart.core.http.basePath,
-        };
-        // @ts-ignore
-        return format.convert(val, type, undefined, parsedUrl);
+
+        return format.convert(val, type);
       },
     } as FieldFormat;
   } else {

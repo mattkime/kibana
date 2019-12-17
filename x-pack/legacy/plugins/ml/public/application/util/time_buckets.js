@@ -317,12 +317,11 @@ TimeBuckets.prototype.getScaledDateFormat = function() {
 TimeBuckets.prototype.getScaledDateFormatter = function() {
   const fieldFormats = npStart.plugins.data.fieldFormats;
   const DateFieldFormat = fieldFormats.getType(FIELD_FORMAT_IDS.DATE);
-  return new DateFieldFormat(
-    {
-      pattern: this.getScaledDateFormat(),
-    },
-    getConfig
-  );
+  const metaParams = fieldFormats.generateFieldFormatMetaParams({
+    pattern: this.getScaledDateFormat(),
+  });
+
+  return new DateFieldFormat(metaParams, getConfig);
 };
 
 // Appends some TimeBuckets specific properties to the moment.js duration interval.

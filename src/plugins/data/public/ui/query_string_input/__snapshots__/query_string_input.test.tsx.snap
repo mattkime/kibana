@@ -156,6 +156,7 @@ exports[`QueryStringInput Should disable autoFocus on EuiFieldText when disableA
                 "getProvider": [MockFunction],
               },
               "fieldFormats": Object {
+                "generateFieldFormatMetaParams": [MockFunction],
                 "getByFieldType": [MockFunction],
                 "getConfig": [MockFunction],
                 "getDefaultConfig": [MockFunction],
@@ -777,6 +778,7 @@ exports[`QueryStringInput Should disable autoFocus on EuiFieldText when disableA
                         "getProvider": [MockFunction],
                       },
                       "fieldFormats": Object {
+                        "generateFieldFormatMetaParams": [MockFunction],
                         "getByFieldType": [MockFunction],
                         "getConfig": [MockFunction],
                         "getDefaultConfig": [MockFunction],
@@ -1386,6 +1388,7 @@ exports[`QueryStringInput Should pass the query language to the language switche
                 "getProvider": [MockFunction],
               },
               "fieldFormats": Object {
+                "generateFieldFormatMetaParams": [MockFunction],
                 "getByFieldType": [MockFunction],
                 "getConfig": [MockFunction],
                 "getDefaultConfig": [MockFunction],
@@ -2004,6 +2007,7 @@ exports[`QueryStringInput Should pass the query language to the language switche
                         "getProvider": [MockFunction],
                       },
                       "fieldFormats": Object {
+                        "generateFieldFormatMetaParams": [MockFunction],
                         "getByFieldType": [MockFunction],
                         "getConfig": [MockFunction],
                         "getDefaultConfig": [MockFunction],
@@ -2613,6 +2617,7 @@ exports[`QueryStringInput Should render the given query 1`] = `
                 "getProvider": [MockFunction],
               },
               "fieldFormats": Object {
+                "generateFieldFormatMetaParams": [MockFunction],
                 "getByFieldType": [MockFunction],
                 "getConfig": [MockFunction],
                 "getDefaultConfig": [MockFunction],
@@ -3231,6 +3236,7 @@ exports[`QueryStringInput Should render the given query 1`] = `
                         "getProvider": [MockFunction],
                       },
                       "fieldFormats": Object {
+                        "generateFieldFormatMetaParams": [MockFunction],
                         "getByFieldType": [MockFunction],
                         "getConfig": [MockFunction],
                         "getDefaultConfig": [MockFunction],

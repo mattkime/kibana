@@ -26,7 +26,7 @@ import { createSavedObjectClass } from '../saved_object';
 import StubIndexPattern from 'test_utils/stub_index_pattern';
 import { npStart } from 'ui/new_platform';
 import { InvalidJSONProperty } from '../../../../../plugins/kibana_utils/public';
-import { mockUiSettings } from '../../new_platform/new_platform.karma_mock';
+import { npSetup } from '../../new_platform/new_platform.karma_mock';
 
 const getConfig = cfg => cfg;
 
@@ -305,13 +305,7 @@ describe('Saved Object', function() {
                 type: 'dashboard',
               });
             });
-            const indexPattern = new StubIndexPattern(
-              'my-index',
-              getConfig,
-              null,
-              [],
-              mockUiSettings
-            );
+            const indexPattern = new StubIndexPattern('my-index', getConfig, null, [], npSetup);
             indexPattern.title = indexPattern.id;
             savedObject.searchSource.setField('index', indexPattern);
             return savedObject.save().then(() => {
@@ -695,13 +689,7 @@ describe('Saved Object', function() {
 
         const savedObject = new SavedObject(config);
         sinon.stub(savedObject, 'hydrateIndexPattern').callsFake(() => {
-          const indexPattern = new StubIndexPattern(
-            indexPatternId,
-            getConfig,
-            null,
-            [],
-            mockUiSettings
-          );
+          const indexPattern = new StubIndexPattern(indexPatternId, getConfig, null, [], npSetup);
           indexPattern.title = indexPattern.id;
           savedObject.searchSource.setField('index', indexPattern);
           return Promise.resolve(indexPattern);
