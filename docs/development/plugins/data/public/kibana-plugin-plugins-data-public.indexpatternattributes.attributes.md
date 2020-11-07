@@ -7,5 +7,5 @@
 <b>Signature:</b>
 
 ```typescript
-attributes?: IndexPatternAttrs;
+attributes?: string;
 ```
