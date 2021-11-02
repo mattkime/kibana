@@ -37,7 +37,7 @@ If you loaded your own data, follow these steps to create a data view.
 . Click *Create data view*.
 
 [role="screenshot"]
-image:management/index-patterns/images/create-index-pattern.png["Create data view"]
+image:management/index-patterns/images/create-data-view.png["Create data view"]
 
 . Start typing in the *name* field, and {kib} looks for the names of
 indices, data streams, and aliases that match your input.
