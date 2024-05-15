@@ -145,7 +145,7 @@ interface ExpressionAstOptions {
   asDatatable?: boolean;
 }
 
-const omitByIsNil = (object: Record<string, any>) => omitBy(object, isNil);
+const omitByIsNil = <T>(object: Record<string, unknown>) => omitBy(object, isNil) as T;
 
 /** @public **/
 export class SearchSource {
@@ -800,12 +800,12 @@ export class SearchSource {
     const fieldListProvided = !!body.fields;
 
     // set defaults
-    const _source =
+    const initialUnderscoreSource =
       index && !body.hasOwnProperty('_source') ? index.getSourceFiltering() : body._source;
 
     // get filter if data view specified, otherwise null filter
     const filter = index
-      ? this.getFieldFilter({ bodySourceExcludes: _source.excludes, metaFields })
+      ? this.getFieldFilter({ bodySourceExcludes: initialUnderscoreSource.excludes, metaFields })
       : (fields: Array<SearchFieldValue | { field: string; format: string }>) =>
           fields.map(this.getFieldName);
 
@@ -842,7 +842,7 @@ export class SearchSource {
       uniqFieldNames,
       scriptFields: scriptedFields,
       runtimeFields,
-      _source,
+      _source: initialUnderscoreSource,
     });
 
     // For testing shard failure messages in the UI, follow these steps:
@@ -864,13 +864,6 @@ export class SearchSource {
     // });
     // Alternatively you could also add this query via "Edit as Query DSL", then it needs no code to be changed
 
-    body._source = _source;
-
-    // only include unique values
-    if (sourceFieldsProvided && !isEqual(remainingFields, fieldsFromSource)) {
-      body._source = { includes: remainingFields };
-    }
-
     const builtQuery = this.getBuiltEsQuery({
       index,
       query: searchRequest.query,
@@ -888,7 +881,14 @@ export class SearchSource {
           ? getHighlightRequest(getConfig(UI_SETTINGS.DOC_HIGHLIGHT))
           : undefined,
       // remove _source, since everything's coming from fields API, scripted, or stored fields
-      _source: fieldListProvided && !sourceFieldsProvided ? false : body._source,
+      _source: (() => {
+        if (fieldListProvided && !sourceFieldsProvided) return false;
+        // only include unique values
+        if (sourceFieldsProvided && !isEqual(remainingFields, fieldsFromSource)) {
+          return { includes: remainingFields };
+        }
+        return initialUnderscoreSource;
+      })(),
       stored_fields:
         fieldListProvided || sourceFieldsProvided ? [...new Set(remainingFields)] : ['*'],
       runtime_mappings: runtimeFields,
