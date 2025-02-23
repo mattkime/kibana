@@ -47,6 +47,7 @@ export interface CoreStart {
   customBranding: CustomBrandingStart;
   /** {@link DocLinksStart} */
   docLinks: DocLinksStart;
+  elasticsearch: { hello: () => void };
   /** {@link ExecutionContextStart} */
   executionContext: ExecutionContextStart;
   /** {@link FeatureFlagsStart} */

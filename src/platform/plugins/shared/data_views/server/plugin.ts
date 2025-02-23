@@ -90,12 +90,10 @@ export class DataViewsServerPlugin
     };
   }
 
-  public start(
-    { uiSettings, capabilities }: CoreStart,
-    { fieldFormats }: DataViewsServerPluginStartDependencies
-  ) {
+  public start(core: CoreStart, { fieldFormats }: DataViewsServerPluginStartDependencies) {
     const config = this.initializerContext.config.get<ClientConfigType>();
     const scriptedFieldsEnabled = config.scriptedFieldsEnabled === false ? false : true; // accounting for null value
+    const { uiSettings, capabilities } = core;
 
     const serviceFactory = dataViewsServiceFactory({
       logger: this.logger.get('indexPatterns'),

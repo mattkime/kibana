@@ -111,6 +111,7 @@ export class CoreSystem {
   private readonly customBranding: CustomBrandingService;
   private readonly security: SecurityService;
   private readonly userProfile: UserProfileService;
+  private readonly elasticsearch: { hello: () => void };
   private fatalErrorsSetup: FatalErrorsSetup | null = null;
 
   constructor(params: CoreSystemParams) {
@@ -159,6 +160,12 @@ export class CoreSystem {
       kibanaVersion: injectedMetadata.version,
       coreContext: this.coreContext,
     });
+    this.elasticsearch = {
+      hello: () => {
+        // eslint-disable-next-line no-console
+        console.log('HELLO WORLD!');
+      },
+    };
     this.docLinks = new DocLinksService(this.coreContext);
     this.rendering = new RenderingService();
     this.application = new ApplicationService();
@@ -317,6 +324,7 @@ export class CoreSystem {
       const fatalErrors = this.fatalErrors.start();
       const theme = this.theme.start();
       await this.integrations.start({ uiSettings });
+      const elasticsearch = this.elasticsearch;
 
       const coreUiTargetDomElement = document.createElement('div');
       coreUiTargetDomElement.id = 'kibana-body';
@@ -386,6 +394,7 @@ export class CoreSystem {
         application,
         chrome,
         docLinks,
+        elasticsearch,
         executionContext,
         featureFlags,
         http,
