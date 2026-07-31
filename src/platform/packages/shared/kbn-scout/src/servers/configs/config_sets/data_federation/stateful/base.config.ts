@@ -16,6 +16,9 @@ import { defaultConfig } from '../../default/stateful/base.config';
 
 const CLUSTER_STATE_ENCRYPTION_PASSWORD_ID = 'data_fed_test';
 
+const KBN_OPTIMIZER_COMPLETE =
+  /@kbn\/optimizer].*(all bundles cached|bundles compiled successfully)/;
+
 const scoutSecureSettingsDir = resolve(REPO_ROOT, '.scout', 'secure_settings');
 mkdirSync(scoutSecureSettingsDir, { recursive: true });
 
@@ -49,5 +52,11 @@ export const dataFederationConfig: ScoutServerConfig = {
       `cluster.state.encryption.active_password_id=${clusterStateEncryptionActivePasswordIdFile}`,
       `cluster.state.encryption.password.${CLUSTER_STATE_ENCRYPTION_PASSWORD_ID}=${clusterStateEncryptionPasswordFile}`,
     ],
+  },
+  kbnTestServer: {
+    ...defaultConfig.kbnTestServer,
+    runOptions: {
+      wait: [/Kibana is now available/, KBN_OPTIMIZER_COMPLETE],
+    },
   },
 };

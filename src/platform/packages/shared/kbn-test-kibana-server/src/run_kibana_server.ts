@@ -44,7 +44,7 @@ export async function runKibanaServer(options: RunKibanaServerOptions) {
 
   const runOptions = options.config.get('kbnTestServer.runOptions') as {
     alwaysUseSource?: boolean;
-    wait?: boolean | RegExp;
+    wait?: boolean | RegExp | RegExp[];
   };
   const installDir = runOptions.alwaysUseSource ? undefined : options.installDir;
   const devMode = !installDir;

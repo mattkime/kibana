@@ -257,8 +257,8 @@ export const schema = Joi.object()
              * Note that this log message must not be filtered out by the current logging config, for example by the
              * log level. If needed, you can adjust the logging level via `kbnTestServer.serverArgs`.
              */
-            wait: Joi.object()
-              .regex()
+            wait: Joi.alternatives()
+              .try(Joi.object().regex(), Joi.array().items(Joi.object().regex()))
               .default(/Kibana is now available/),
 
             /**

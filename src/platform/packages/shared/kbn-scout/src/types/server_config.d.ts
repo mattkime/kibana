@@ -39,5 +39,9 @@ export interface ScoutServerConfig {
     sourceArgs: string[];
     serverArgs: string[];
     useDedicatedTestRunner?: boolean;
+    runOptions?: {
+      wait?: RegExp | RegExp[];
+      alwaysUseSource?: boolean;
+    };
   };
 }

@@ -6,6 +6,9 @@
  * your election, the "Elastic License 2.0", the "GNU Affero General Public
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
+import Fs from 'fs';
+import Os from 'os';
+import Path from 'path';
 
 import { ToolingLog } from '@kbn/tooling-log';
 import { withProcRunner } from './with_proc_runner';
@@ -66,4 +69,47 @@ it('waits for promise to reject before tearing down proc and rejecting with the 
 
   expect(teardownSpy).not.toBe(undefined);
   expect(teardownSpy).toHaveBeenCalled();
+});
+
+it('waits for every RegExp when wait is an array', async () => {
+  const firstMarkerPath = Path.join(Os.tmpdir(), `proc-runner-wait-array-first-${process.pid}`);
+  const secondMarkerPath = Path.join(Os.tmpdir(), `proc-runner-wait-array-second-${process.pid}`);
+
+  for (const markerPath of [firstMarkerPath, secondMarkerPath]) {
+    if (Fs.existsSync(markerPath)) {
+      Fs.rmSync(markerPath);
+    }
+  }
+
+  const wait = async (ms: number) => {
+    const { promise, resolve } = Promise.withResolvers<void>();
+    setTimeout(resolve, ms);
+    return promise;
+  };
+
+  await withProcRunner(new ToolingLog(), async (proc) => {
+    const procRun = proc.run('wait-array', {
+      cmd: process.execPath,
+      args: [
+        '-e',
+        `const fs = require('fs'); fs.writeFileSync(${JSON.stringify(
+          firstMarkerPath
+        )}, 'done'); console.log('first'); setTimeout(() => { fs.writeFileSync(${JSON.stringify(
+          secondMarkerPath
+        )}, 'done'); console.log('second'); }, 1000);`,
+      ],
+      cwd: process.cwd(),
+      wait: [/first/, /second/],
+      waitTimeout: 5000,
+    });
+
+    while (!Fs.existsSync(firstMarkerPath)) {
+      await wait(20);
+    }
+
+    expect(Fs.existsSync(secondMarkerPath)).toBe(false);
+
+    await procRun;
+    expect(Fs.readFileSync(secondMarkerPath, 'utf8')).toBe('done');
+  });
 });

@@ -23,9 +23,10 @@ const noop = () => {};
 interface RunOptions extends ProcOptions {
   /**
    * When omitted or `false`, start the process and return without waiting for a log line or exit.
-   * `true` waits for the process to exit; a `RegExp` waits for a matching log line.
+   * `true` waits for the process to exit; a `RegExp` waits for a matching log line; a `RegExp[]`
+   * waits until every pattern has matched.
    */
-  wait?: true | RegExp | false;
+  wait?: true | RegExp | RegExp[] | false;
   waitTimeout?: number | false;
   onEarlyExit?: (msg: string) => void;
 }
@@ -63,8 +64,12 @@ export class ProcRunner {
       throw new Error('ProcRunner is closing');
     }
 
-    if (wait && !(wait instanceof RegExp) && wait !== true) {
-      throw new TypeError('wait param should either be a RegExp or `true`');
+    if (wait && !(wait instanceof RegExp) && !Array.isArray(wait) && wait !== true) {
+      throw new TypeError('wait param should either be a RegExp, RegExp[], or `true`');
+    }
+
+    if (Array.isArray(wait) && wait.some((pattern) => !(pattern instanceof RegExp))) {
+      throw new TypeError('wait param should either be a RegExp, RegExp[], or `true`');
     }
 
     if (!!this.getProc(name)) {
@@ -96,17 +101,26 @@ export class ProcRunner {
     }
 
     try {
-      if (wait instanceof RegExp) {
-        // wait for process to log matching line
+      if (wait instanceof RegExp || Array.isArray(wait)) {
+        const waitPatterns = Array.isArray(wait) ? wait : [wait];
+
+        // wait for process to log all matching lines
         await Rx.lastValueFrom(
           Rx.race(
             proc.lines$.pipe(
-              Rx.filter((line) => wait.test(line)),
+              Rx.scan(
+                (matchedPatterns, line) =>
+                  matchedPatterns.map((matched, i) => matched || waitPatterns[i].test(line)),
+                waitPatterns.map(() => false)
+              ),
+              Rx.filter((matchedPatterns) => matchedPatterns.every(Boolean)),
               Rx.take(1),
               Rx.defaultIfEmpty(undefined),
-              Rx.map((line) => {
-                if (line === undefined) {
-                  throw createFailError(`[${name}] exited without matching pattern: ${wait}`);
+              Rx.map((matchedPatterns) => {
+                if (matchedPatterns === undefined) {
+                  throw createFailError(
+                    `[${name}] exited without matching patterns: ${waitPatterns}`
+                  );
                 }
               })
             ),
@@ -116,7 +130,7 @@ export class ProcRunner {
                   Rx.map(() => {
                     const sec = waitTimeout / SECOND;
                     throw createFailError(
-                      `[${name}] failed to match pattern within ${sec} seconds [pattern=${wait}]`
+                      `[${name}] failed to match patterns within ${sec} seconds [patterns=${waitPatterns}]`
                     );
                   })
                 )
