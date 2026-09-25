@@ -5,14 +5,14 @@
  * 2.0.
  */
 
-import React, { Fragment } from 'react';
-import { EuiCode, EuiFieldNumber, EuiFieldText, EuiFormRow, EuiText } from '@elastic/eui';
+import React from 'react';
+import { EuiCode, EuiFieldNumber, EuiFieldText, EuiFormRow } from '@elastic/eui';
+import { FormattedMessage } from '@kbn/i18n-react';
 import type { Control } from 'react-hook-form';
 import { useController } from 'react-hook-form';
 
 import { createDatasetWizardStrings } from '../create_dataset_wizard_i18n';
 import {
-  DEFAULT_FILE_EXCLUSIONS,
   validateMaxErrorRatio,
   validateMaxErrors,
   type CreateDatasetFormValues,
@@ -22,23 +22,11 @@ import { FormRowLabelWithInfo } from './form_row_label_with_info';
 import { FileExclusionsSelect } from './file_exclusions_select';
 import { PartitionDetectionSelect } from './partition_detection_select';
 
-const helpTextDefault = (valueLabel: string) => (
-  <EuiText size="xs" color="subdued">
-    <EuiCode>{valueLabel}</EuiCode> {createDatasetWizardStrings.byDefaultSuffix}
-  </EuiText>
-);
-
-const fileExclusionsDefaultHelp = (
-  <EuiText size="xs" color="subdued">
-    {createDatasetWizardStrings.settingsFileExclusionsHelp}{' '}
-    {DEFAULT_FILE_EXCLUSIONS.map((pattern, index) => (
-      <Fragment key={pattern}>
-        {index > 0 ? ', ' : null}
-        <EuiCode>{pattern}</EuiCode>
-      </Fragment>
-    ))}{' '}
-    {createDatasetWizardStrings.byDefaultSuffix}
-  </EuiText>
+const fileExclusionsHelp = (
+  <FormattedMessage
+    id="xpack.dataFederation.createDatasetForm.settingsFileExclusionsHelpText"
+    defaultMessage="Files matching these patterns are excluded."
+  />
 );
 
 export function SharedAdvancedSettings({ control }: { control: Control<CreateDatasetFormValues> }) {
@@ -67,21 +55,13 @@ export function SharedAdvancedSettings({ control }: { control: Control<CreateDat
             infoText={createDatasetWizardStrings.settingsFileExclusionsDescription}
           />
         }
-        helpText={fileExclusionsDefaultHelp}
+        helpText={fileExclusionsHelp}
         fullWidth
       >
         <FileExclusionsSelect control={control} />
       </EuiFormRow>
 
-      <EuiFormRow
-        label={
-          <FormRowLabelWithInfo
-            label={createDatasetWizardStrings.settingsPartitionDetectionLabel}
-            infoText={createDatasetWizardStrings.settingsPartitionDetectionDescription}
-          />
-        }
-        fullWidth
-      >
+      <EuiFormRow label={createDatasetWizardStrings.settingsPartitionDetectionLabel} fullWidth>
         <PartitionDetectionSelect control={control} />
       </EuiFormRow>
 
@@ -98,6 +78,7 @@ export function SharedAdvancedSettings({ control }: { control: Control<CreateDat
         <EuiFieldText
           data-test-subj="createDatasetSettingsPartitionPath"
           fullWidth
+          placeholder={createDatasetWizardStrings.settingsPartitionPathPlaceholder}
           value={partitionPathField.value}
           onChange={(e) => partitionPathField.onChange(e.target.value)}
           name={partitionPathField.name}
@@ -112,7 +93,15 @@ export function SharedAdvancedSettings({ control }: { control: Control<CreateDat
             infoText={createDatasetWizardStrings.settingsErrorModeDescription}
           />
         }
-        helpText={helpTextDefault('fail_fast')}
+        helpText={
+          <FormattedMessage
+            id="xpack.dataFederation.createDatasetForm.settingsErrorModeHelpText"
+            defaultMessage="Defaults to {failFast} when no option is selected."
+            values={{
+              failFast: <strong>{createDatasetWizardStrings.settingsErrorModeFailFast}</strong>,
+            }}
+          />
+        }
         fullWidth
       >
         <ErrorModeSelect
@@ -129,7 +118,12 @@ export function SharedAdvancedSettings({ control }: { control: Control<CreateDat
             infoText={createDatasetWizardStrings.settingsMaxErrorsDescription}
           />
         }
-        helpText={helpTextDefault(createDatasetWizardStrings.unbounded)}
+        helpText={
+          <FormattedMessage
+            id="xpack.dataFederation.createDatasetForm.settingsMaxErrorsHelpText"
+            defaultMessage="If left blank, there is no limit."
+          />
+        }
         fullWidth
         isInvalid={Boolean(maxErrorsState.error)}
         error={maxErrorsState.error?.message}
@@ -139,7 +133,6 @@ export function SharedAdvancedSettings({ control }: { control: Control<CreateDat
           fullWidth
           min={0}
           step={1}
-          placeholder={createDatasetWizardStrings.settingsMaxErrorsPlaceholder}
           isInvalid={Boolean(maxErrorsState.error)}
           value={maxErrorsField.value}
           onChange={(e) => maxErrorsField.onChange(e.target.value)}
@@ -155,7 +148,15 @@ export function SharedAdvancedSettings({ control }: { control: Control<CreateDat
             infoText={createDatasetWizardStrings.settingsMaxErrorRatioDescription}
           />
         }
-        helpText={helpTextDefault('0.0')}
+        helpText={
+          <FormattedMessage
+            id="xpack.dataFederation.createDatasetForm.settingsMaxErrorRatioHelpText"
+            defaultMessage="If left blank, defaults to {defaultValue}."
+            values={{
+              defaultValue: <EuiCode>0.0</EuiCode>,
+            }}
+          />
+        }
         fullWidth
         isInvalid={Boolean(maxErrorRatioState.error)}
         error={maxErrorRatioState.error?.message}

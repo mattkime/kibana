@@ -11,6 +11,7 @@ import { fireEvent, render } from '@testing-library/react';
 import { useForm, useWatch } from 'react-hook-form';
 
 import { KibanaContextProvider } from '@kbn/kibana-react-plugin/public';
+import { I18nProvider } from '@kbn/i18n-react';
 import { CreateDatasetAdditionalSettings, CreateDatasetSettings } from './create_dataset_settings';
 import type { CreateDatasetFormValues, DatasetFormatFormValue } from './create_dataset_form_state';
 import { emptyCreateDatasetSettingsFormValues } from './create_dataset_form_state';
@@ -47,12 +48,14 @@ const renderSettings = () => {
     const settings = useWatch({ control, name: 'settings' });
 
     return (
-      <EuiProvider>
-        <KibanaContextProvider services={{ docLinks: docLinksMock }}>
-          <CreateDatasetSettings control={control} />
-          <div data-test-subj="settingsValue">{JSON.stringify(settings)}</div>
-        </KibanaContextProvider>
-      </EuiProvider>
+      <I18nProvider>
+        <EuiProvider>
+          <KibanaContextProvider services={{ docLinks: docLinksMock }}>
+            <CreateDatasetSettings control={control} />
+            <div data-test-subj="settingsValue">{JSON.stringify(settings)}</div>
+          </KibanaContextProvider>
+        </EuiProvider>
+      </I18nProvider>
     );
   };
 
@@ -178,11 +181,13 @@ const renderAdditionalSettings = (format: DatasetFormatFormValue = '') => {
     });
 
     return (
-      <EuiProvider>
-        <KibanaContextProvider services={{ docLinks: docLinksMock }}>
-          <CreateDatasetAdditionalSettings control={control} />
-        </KibanaContextProvider>
-      </EuiProvider>
+      <I18nProvider>
+        <EuiProvider>
+          <KibanaContextProvider services={{ docLinks: docLinksMock }}>
+            <CreateDatasetAdditionalSettings control={control} />
+          </KibanaContextProvider>
+        </EuiProvider>
+      </I18nProvider>
     );
   };
 

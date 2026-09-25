@@ -6,21 +6,13 @@
  */
 
 import React from 'react';
-import {
-  EuiCode,
-  EuiFieldNumber,
-  EuiFieldText,
-  EuiFormRow,
-  EuiSelect,
-  EuiText,
-} from '@elastic/eui';
+import { EuiCode, EuiFieldNumber, EuiFieldText, EuiFormRow, EuiSelect } from '@elastic/eui';
+import { FormattedMessage } from '@kbn/i18n-react';
 import type { Control } from 'react-hook-form';
 import { useController } from 'react-hook-form';
 
 import { createDatasetWizardStrings } from '../create_dataset_wizard_i18n';
 import {
-  DEFAULT_DATETIME_FORMAT,
-  DEFAULT_ENCODING,
   validateDelimiter,
   validateSkipRows,
   type CreateDatasetFormValues,
@@ -42,12 +34,6 @@ const HEADER_ROW_OPTIONS = [
   { value: 'true', text: createDatasetWizardStrings.trueLabel },
   { value: 'false', text: createDatasetWizardStrings.falseLabel },
 ];
-
-const helpTextDefault = (valueLabel: string) => (
-  <EuiText size="xs" color="subdued">
-    <EuiCode>{valueLabel}</EuiCode> {createDatasetWizardStrings.byDefaultSuffix}
-  </EuiText>
-);
 
 export function CsvTsvCommonSettings({ control }: { control: Control<CreateDatasetFormValues> }) {
   const { field: delimiterField, fieldState: delimiterState } = useController({
@@ -94,12 +80,8 @@ export function CsvTsvCommonSettings({ control }: { control: Control<CreateDatas
         />
       </EuiFormRow>
       <EuiFormRow
-        label={
-          <FormRowLabelWithInfo
-            label={createDatasetWizardStrings.settingsModeLabel}
-            infoText={createDatasetWizardStrings.settingsQuoteModeDescription}
-          />
-        }
+        label={createDatasetWizardStrings.settingsModeLabel}
+        helpText={createDatasetWizardStrings.settingsQuoteModeDescription}
         fullWidth
       >
         <EuiSelect
@@ -114,12 +96,8 @@ export function CsvTsvCommonSettings({ control }: { control: Control<CreateDatas
         />
       </EuiFormRow>
       <EuiFormRow
-        label={
-          <FormRowLabelWithInfo
-            label={createDatasetWizardStrings.settingsHeaderRowLabel}
-            infoText={createDatasetWizardStrings.settingsHeaderRowDescription}
-          />
-        }
+        label={createDatasetWizardStrings.settingsHeaderRowLabel}
+        helpText={createDatasetWizardStrings.settingsHeaderRowHelp}
         fullWidth
       >
         <EuiSelect
@@ -165,7 +143,13 @@ export function CsvTsvCommonSettings({ control }: { control: Control<CreateDatas
             infoText={createDatasetWizardStrings.settingsDatetimeFormatDescription}
           />
         }
-        helpText={helpTextDefault(DEFAULT_DATETIME_FORMAT)}
+        helpText={
+          <FormattedMessage
+            id="xpack.dataFederation.createDatasetForm.settingsDatetimeFormatHelpText"
+            defaultMessage="If left blank, defaults to {defaultValue}."
+            values={{ defaultValue: <EuiCode>ISO-8601</EuiCode> }}
+          />
+        }
         fullWidth
       >
         <EuiFieldText
@@ -182,10 +166,19 @@ export function CsvTsvCommonSettings({ control }: { control: Control<CreateDatas
         label={
           <FormRowLabelWithInfo
             label={createDatasetWizardStrings.settingsNullValueLabel}
-            infoText={createDatasetWizardStrings.settingsNullValueDescription}
+            infoText={
+              <FormattedMessage
+                id="xpack.dataFederation.createDatasetWizard.additionalSettings.nullValue.descriptionText"
+                defaultMessage="Enter the value your files use for missing data. For example: {nullValue} or {naValue}. When set, empty fields are no longer treated as null."
+                values={{
+                  nullValue: <EuiCode>NULL</EuiCode>,
+                  naValue: <EuiCode>NA</EuiCode>,
+                }}
+              />
+            }
           />
         }
-        helpText={helpTextDefault(createDatasetWizardStrings.emptyString)}
+        helpText={createDatasetWizardStrings.settingsNullValueHelp}
         fullWidth
       >
         <EuiFieldText
@@ -198,13 +191,8 @@ export function CsvTsvCommonSettings({ control }: { control: Control<CreateDatas
         />
       </EuiFormRow>
       <EuiFormRow
-        label={
-          <FormRowLabelWithInfo
-            label={createDatasetWizardStrings.settingsEncodingLabel}
-            infoText={createDatasetWizardStrings.settingsEncodingDescription}
-          />
-        }
-        helpText={helpTextDefault(DEFAULT_ENCODING)}
+        label={createDatasetWizardStrings.settingsEncodingLabel}
+        helpText={createDatasetWizardStrings.settingsEncodingHelp}
         fullWidth
       >
         <EncodingSelect control={control} />

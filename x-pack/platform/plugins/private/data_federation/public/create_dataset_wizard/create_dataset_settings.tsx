@@ -17,6 +17,7 @@ import {
 } from '@elastic/eui';
 import type { Control } from 'react-hook-form';
 import { useController, useWatch } from 'react-hook-form';
+import { FormattedMessage } from '@kbn/i18n-react';
 
 import { createDatasetWizardStrings } from './create_dataset_wizard_i18n';
 import {
@@ -28,6 +29,7 @@ import {
 import { CsvTsvAdvancedSettings } from './components/csv_tsv_advanced_settings';
 import { CsvTsvCommonSettings } from './components/csv_tsv_common_settings';
 import { FormatSelect } from './components/format_select';
+import { FormRowLabelWithInfo } from './components/form_row_label_with_info';
 import { NdjsonCommonSettings } from './components/ndjson_common_settings';
 import { ParquetAdvancedSettings } from './components/parquet_advanced_settings';
 import { ParquetCommonSettings } from './components/parquet_common_settings';
@@ -254,7 +256,32 @@ function RemainingUniversalSettings({
   return (
     <>
       <EuiFormRow
-        label={createDatasetWizardStrings.settingsSchemaResolutionLabel}
+        label={
+          <FormRowLabelWithInfo
+            label={createDatasetWizardStrings.settingsSchemaResolutionLabel}
+            infoText={
+              <FormattedMessage
+                id="xpack.dataFederation.createDatasetForm.settingsSchemaResolutionDescription"
+                defaultMessage="{firstFileWins} uses the first matching file. {strict} requires identical schemas. {unionByName} merges fields by name."
+                values={{
+                  firstFileWins: (
+                    <strong>
+                      {createDatasetWizardStrings.settingsSchemaResolutionFirstFileWins}
+                    </strong>
+                  ),
+                  strict: (
+                    <strong>{createDatasetWizardStrings.settingsSchemaResolutionStrict}</strong>
+                  ),
+                  unionByName: (
+                    <strong>
+                      {createDatasetWizardStrings.settingsSchemaResolutionUnionByName}
+                    </strong>
+                  ),
+                }}
+              />
+            }
+          />
+        }
         helpText={createDatasetWizardStrings.settingsSchemaResolutionHelp}
         fullWidth
       >
