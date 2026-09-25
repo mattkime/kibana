@@ -21,7 +21,6 @@ import {
 import { i18n } from '@kbn/i18n';
 import { FormattedMessage } from '@kbn/i18n-react';
 
-import { createDatasetWizardStrings } from './create_dataset_wizard_i18n';
 import type { MappingEditorValue } from '../components/mapping_editor';
 
 const TIMESTAMP_LOGICAL_FIELD_NAME = '@timestamp';
@@ -162,13 +161,15 @@ export function TimeseriesDataSection({
                 label={i18n.translate(
                   'xpack.dataFederation.createDatasetWizard.timestampFieldFormatLabel',
                   {
-                    defaultMessage: 'Format (optional)',
+                    defaultMessage: 'Date and time format (optional)',
                   }
                 )}
                 helpText={
-                  <>
-                    <EuiCode>ISO-8601</EuiCode> {createDatasetWizardStrings.byDefaultSuffix}
-                  </>
+                  <FormattedMessage
+                    id="xpack.dataFederation.createDatasetWizard.timestampFieldFormatHelp"
+                    defaultMessage="If left blank, defaults to {defaultValue}."
+                    values={{ defaultValue: <EuiCode>ISO-8601</EuiCode> }}
+                  />
                 }
                 fullWidth
               >
@@ -176,7 +177,7 @@ export function TimeseriesDataSection({
                   fullWidth
                   placeholder={i18n.translate(
                     'xpack.dataFederation.createDatasetWizard.timestampFieldFormatPlaceholder',
-                    { defaultMessage: 'Select or enter a format' }
+                    { defaultMessage: 'yyyy-MM-dd HH:mm:ss' }
                   )}
                   value={timestampField?.format ?? ''}
                   onChange={(e) => onChangeTimestampField({ format: e.target.value })}

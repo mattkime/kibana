@@ -9,6 +9,7 @@ import React, { useState } from 'react';
 import { EuiProvider } from '@elastic/eui';
 import { fireEvent, render } from '@testing-library/react';
 import type { DocLinksStart } from '@kbn/core-doc-links-browser';
+import { I18nProvider } from '@kbn/i18n-react';
 
 import { MappingEditor } from './mapping_editor';
 import type { MappingEditorValue } from './mapping_editor';
@@ -33,14 +34,16 @@ describe('MappingEditor', () => {
     const onChange = jest.fn();
 
     const { getByTestId, getByText } = render(
-      <EuiProvider>
-        <MappingEditor
-          value={value}
-          onChange={onChange}
-          docLinks={docLinksMock}
-          reservedFieldNames={['@timestamp']}
-        />
-      </EuiProvider>
+      <I18nProvider>
+        <EuiProvider>
+          <MappingEditor
+            value={value}
+            onChange={onChange}
+            docLinks={docLinksMock}
+            reservedFieldNames={['@timestamp']}
+          />
+        </EuiProvider>
+      </I18nProvider>
     );
 
     fireEvent.change(getByTestId('dataFederationMappingEditorFieldName'), {
@@ -76,20 +79,22 @@ describe('MappingEditor', () => {
       });
 
       return (
-        <EuiProvider>
-          <MappingEditor
-            value={value}
-            onChange={(next) =>
-              setValue((prev) =>
-                typeof next === 'function'
-                  ? (next as (p: MappingEditorValue) => MappingEditorValue)(prev)
-                  : next
-              )
-            }
-            docLinks={docLinksMock}
-          />
-          <div data-test-subj="mappingEditorValueJson">{JSON.stringify(value)}</div>
-        </EuiProvider>
+        <I18nProvider>
+          <EuiProvider>
+            <MappingEditor
+              value={value}
+              onChange={(next) =>
+                setValue((prev) =>
+                  typeof next === 'function'
+                    ? (next as (p: MappingEditorValue) => MappingEditorValue)(prev)
+                    : next
+                )
+              }
+              docLinks={docLinksMock}
+            />
+            <div data-test-subj="mappingEditorValueJson">{JSON.stringify(value)}</div>
+          </EuiProvider>
+        </I18nProvider>
       );
     };
 
