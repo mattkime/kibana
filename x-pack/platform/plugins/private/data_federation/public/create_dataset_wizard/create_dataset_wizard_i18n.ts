@@ -199,6 +199,15 @@ export const createDatasetWizardStrings = {
       defaultMessage: 'Save dataset',
     }
   ),
+  backButton: i18n.translate('xpack.dataFederation.createDatasetWizard.backButtonLabel', {
+    defaultMessage: 'Back',
+  }),
+  nextButton: i18n.translate('xpack.dataFederation.createDatasetWizard.nextButtonLabel', {
+    defaultMessage: 'Next',
+  }),
+  savingButton: i18n.translate('xpack.dataFederation.createDatasetWizard.savingButtonLabel', {
+    defaultMessage: 'Saving...',
+  }),
 
   // Form strings
   editTitleWithId: (id: string) =>

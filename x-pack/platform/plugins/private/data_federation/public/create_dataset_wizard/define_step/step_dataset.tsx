@@ -7,7 +7,6 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { EuiSpacer, EuiText, EuiTitle } from '@elastic/eui';
-import { Forms } from '@kbn/es-ui-shared-plugin/public';
 import { useFormContext, useWatch } from 'react-hook-form';
 
 import type { DataSource } from '../../../common';
@@ -16,7 +15,7 @@ import type { CreateDatasetFormValues, DatasetFormatFormValue } from '../create_
 import { CreateDatasetFormatField } from '../options_step/create_dataset_settings';
 import { createDatasetWizardStrings } from '../create_dataset_wizard_i18n';
 import { SUPPORTED_DATASET_FORMATS, type SupportedDatasetFormat } from './fields/format_select';
-import type { DatasetWizardContent } from '../types';
+import { useWizardStep } from '../wizard_step_context';
 
 const isSupportedDatasetFormat = (value: string): value is SupportedDatasetFormat =>
   (SUPPORTED_DATASET_FORMATS as readonly string[]).includes(value);
@@ -53,8 +52,8 @@ export function StepDataset({
   isEditMode?: boolean;
   datasetNameToEdit?: string;
 }) {
-  const { control, getValues, setValue, trigger } = useFormContext<CreateDatasetFormValues>();
-  const { updateContent } = Forms.useContent<DatasetWizardContent, 'dataset'>('dataset');
+  const { control, setValue, trigger } = useFormContext<CreateDatasetFormValues>();
+  const updateContent = useWizardStep();
   const name = useWatch({ control, name: 'name' });
   const dataSource = useWatch({ control, name: 'data_source' });
   const resource = useWatch({ control, name: 'resource' });
@@ -99,27 +98,8 @@ export function StepDataset({
         setHasAttemptedValidation(true);
         return trigger(['name', 'data_source', 'resource', 'settings.format']);
       },
-      getData: () => {
-        const values = getValues();
-        return {
-          name: values.name,
-          description: values.description,
-          data_source: values.data_source,
-          resource: values.resource,
-          format: values.settings.format,
-        };
-      },
     });
-  }, [
-    name,
-    dataSource,
-    resource,
-    format,
-    getValues,
-    hasAttemptedValidation,
-    trigger,
-    updateContent,
-  ]);
+  }, [name, dataSource, resource, format, hasAttemptedValidation, trigger, updateContent]);
 
   return (
     <div data-test-subj="createDatasetWizardDatasetStep">

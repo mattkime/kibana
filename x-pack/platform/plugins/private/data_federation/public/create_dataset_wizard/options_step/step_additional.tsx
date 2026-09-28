@@ -8,16 +8,15 @@
 import React, { useEffect } from 'react';
 import { EuiSpacer, EuiText, EuiTitle } from '@elastic/eui';
 import { useFormContext } from 'react-hook-form';
-import { Forms } from '@kbn/es-ui-shared-plugin/public';
 
 import type { CreateDatasetFormValues } from '../create_dataset_form_state';
 import { CreateDatasetAdditionalSettings } from './create_dataset_settings';
 import { createDatasetWizardStrings } from '../create_dataset_wizard_i18n';
-import type { DatasetWizardContent } from '../types';
+import { useWizardStep } from '../wizard_step_context';
 
 export function StepAdditional() {
-  const { control, getValues, trigger } = useFormContext<CreateDatasetFormValues>();
-  const { updateContent } = Forms.useContent<DatasetWizardContent, 'settings'>('settings');
+  const { control, trigger } = useFormContext<CreateDatasetFormValues>();
+  const updateContent = useWizardStep();
 
   useEffect(() => {
     updateContent({
@@ -32,9 +31,8 @@ export function StepAdditional() {
           'settings.skip_rows',
         ]);
       },
-      getData: () => getValues().settings,
     });
-  }, [getValues, trigger, updateContent]);
+  }, [trigger, updateContent]);
 
   return (
     <div data-test-subj="createDatasetWizardAdditionalStep">
