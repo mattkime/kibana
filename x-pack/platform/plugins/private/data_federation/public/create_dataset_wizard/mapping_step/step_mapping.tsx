@@ -10,7 +10,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { EuiSpacer } from '@elastic/eui';
 import { KbnDangerCallout } from '@kbn/ui-callout';
 import { useKibana } from '@kbn/kibana-react-plugin/public';
-import { Forms } from '@kbn/es-ui-shared-plugin/public';
 import { useController, useFormContext } from 'react-hook-form';
 
 import type { CreateDatasetFormValues } from '../create_dataset_form_state';
@@ -20,7 +19,7 @@ import { TimeseriesDataSection } from './timeseries_data_section';
 import type { DataFederationKibanaServices } from '../../types';
 import { MappingEditor, type MappingEditorValue } from './mapping_editor';
 import { createDatasetWizardStrings } from '../create_dataset_wizard_i18n';
-import type { DatasetWizardContent } from '../types';
+import { useWizardStep } from '../wizard_step_context';
 
 const TIMESTAMP_LOGICAL_FIELD_NAME = '@timestamp';
 const TIMESTAMP_FIELD_ID = '__timestamp__';
@@ -33,8 +32,8 @@ export function StepMapping() {
   const {
     services: { docLinks },
   } = useKibana<DataFederationKibanaServices>();
-  const { control, getValues } = useFormContext<CreateDatasetFormValues>();
-  const { updateContent } = Forms.useContent<DatasetWizardContent, 'mapping'>('mapping');
+  const { control } = useFormContext<CreateDatasetFormValues>();
+  const updateContent = useWizardStep();
   const { field } = useController({ name: 'mappings', control });
   const [shouldShowTimeseriesValidation, setShouldShowTimeseriesValidation] = useState(false);
   const [shouldShowDefineSchemaValidation, setShouldShowDefineSchemaValidation] = useState(false);
@@ -187,9 +186,8 @@ export function StepMapping() {
         setShouldShowDefineSchemaValidation(true);
         return isMappingStepValid;
       },
-      getData: () => getValues().mappings,
     });
-  }, [getValues, hasAttemptedValidation, isMappingStepValid, updateContent]);
+  }, [hasAttemptedValidation, isMappingStepValid, updateContent]);
 
   return (
     <div data-test-subj="createDatasetWizardMappingStep">
